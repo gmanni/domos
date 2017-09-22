@@ -1,4 +1,4 @@
-angular.module('domotica', ['ui.bootstrap','ui.router','ngAnimate']);
+angular.module('domotica', ['ui.bootstrap', 'ui.router', 'ngAnimate', 'configurazione']);
 
 angular.module('domotica').config(function($stateProvider, $urlRouterProvider) {
 

@@ -1,9 +1,10 @@
 angular.module('domotica')
 	.controller('HomeCtrl',['$scope','$http','$log', function($scope, $http, $log){
-		$scope.config = []; // Initialize with an empty array
+        $scope.config = [];
+
 	    var request = $http({
             // headers: 'Content-Type': 'application/html',
-            url: "config.txt",
+            url: "../../data/config.json",
             method: 'GET',
             cache: false,
             transformResponse: function (data, headersGetter, status) {
@@ -12,11 +13,21 @@ angular.module('domotica')
                 return {data: angular.fromJson(data)};
             }
             }).success(function (data, status, headers, config) {
-                $log.debug("SUCCESS");
-                $log.debug(data);
+                $log.debug("loading config.json SUCCESS");
+                $scope.config = data.data;
+                $log.debug($scope.config);
                
-            })
-            .error(function (data, status, headers, config) {
+                // controllo se c'è almeno un pin configurato
+                $scope.almenoUnoConfigurato = false;
+                for(var i=0; i< $scope.config.digital.length; i++){
+                    $log.debug((i+1) +  " " + $scope.config.digital[i].type);
+                    if($scope.config.digital[i].assigned !== ""){
+                        $scope.almenoUnoConfigurato = true;
+                        break;
+                    }
+                }
+
+            }).error(function (data, status, headers, config) {
                 $log.error('errore = ', data);
             });
 	}]);

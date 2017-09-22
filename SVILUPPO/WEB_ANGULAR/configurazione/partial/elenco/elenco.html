@@ -1,0 +1,44 @@
+<div class="col-md-12" ng-controller="ElencoCtrl">
+	<div class="row">
+		<div class="col-xs-2">
+			Progressivo pin
+		</div>
+		<div class="col-xs-2">
+			type
+		</div>
+		<div class="col-xs-2">
+			assigned
+		</div>
+		<div class="col-xs-2">
+			startUpValue
+		</div>
+		<div class="col-xs-2">
+			milliseconds
+		</div>
+		<div class="col-xs-2">
+			&nbsp;
+		</div>
+	</div>
+	<div class="row" ng-repeat="item in config.digital" style="padding-top: 1rem; padding-bottom: 1rem;">
+		<div class="col-xs-2">
+			{{$index+1}}
+		</div>
+		<div class="col-xs-2">
+			{{item.type}}
+		</div>
+		<div class="col-xs-2">
+			{{item.assigned}}
+		</div>
+		<div class="col-xs-2">
+			{{item.startUpValue}}
+		</div>
+		<div class="col-xs-2">
+			{{item.milliseconds}}
+		</div>
+		<div class="col-xs-2">
+			<button class="btn btn-primary">Edit</button>
+			<button class="btn btn-danger">Canc</button>
+		</div>
+	</div>
+
+</div>

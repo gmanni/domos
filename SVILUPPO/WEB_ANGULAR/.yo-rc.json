@@ -18,6 +18,12 @@
         "marker": "/* Add Component LESS Above */",
         "template": "@import \"<%= filename %>\";"
       }
+    },
+    "modules": [
+      {
+        "name": "configurazione",
+        "file": "configurazione\\configurazione.js"
     }
+    ]
   }
 }
