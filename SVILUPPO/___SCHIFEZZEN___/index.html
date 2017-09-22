@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Piazza Copernico - Demo</title>
+</head>
+<style>
+	body {
+		background: white;
+		font: 14px Arial, Helvetica, sans-serif;
+		font-family: "Arial", Gadget, sans-serif;
+		color: #666;
+
+		text-align: center;
+		margin: 1px;
+	}
+	.inizia:link, .inizia:visited {
+		color: #999;
+	}
+	.inizia:hover {
+		color: #FABD1B;
+	}
+	.titolo:link, .titolo:visited{
+		color: #666;
+	}
+	.titolo:hover{
+		color: #FABD1B;	
+	}
+	.lezione {
+		font-weight:bold;
+		text-align: left;
+	}
+	.nonDisponibile {
+		color: #999;	
+	}
+	.titolo_lezione {
+		/*text-align:left*/
+	}
+	.motore {
+		color: #9C0;
+	}
+	.corso{
+    	font-size: 30px;
+    	text-align: center;
+    	color: #FABD1B;
+    	font-weight: bold;
+  	}
+  	.tipologia{
+  		font-weight: normal;
+  	}
+</style>
+<script src="js/jquery-1.7.1.js"></script>
+
+<script language="javascript">
+	$(document).ready(function () {
+    	var corsi = [
+    		{	
+				titolo: 'Stress lavoro correlato',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/corsi/Copernico/INVESTIMENTO/DEMO/REPOWER/launchFLASH.html?id=demo_10_2',
+				enabled: true,
+				tipo: 'F'
+			},
+			{
+				titolo: 'Teddy Group - Know the game, play the game!',
+				path: '',
+				enabled: true,
+				link: 'http://catalogo.labelacademy.com/Corsi/KKIEN/0075_10/indiceCopernico.html',
+				tipo: 'F'
+			},
+			{
+				titolo: 'Aeronautica Militare - Il project Manager militare',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/Corsi/Aeronautica/0016_12/indiceCopernico.html',
+				enabled: true,
+				tipo: 'F'
+			},
+			{
+				titolo: 'Fiditalia - La rapina in Fiditalia',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/corsi/Fiditalia/0036_09/indiceCopernico.html',
+				enabled: true,
+				tipo: 'F'
+			},
+			{
+				titolo: 'Autostrade - Operazioni invernali',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/Corsi/Autostrade/0060_14/indiceCopernico.html',
+				enabled: true,
+				tipo: 'F'
+			},
+			{
+				titolo: 'Intervento in cabina',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/corsi/Copernico/1074_07/indiceCopernico.html',
+				enabled: true,
+				tipo: 'F'
+			},
+			{
+				titolo: 'Il Bail In',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/corsi/Copernico/INVESTIMENTO/0008_16/indiceCopernicoDemo.html',
+				enabled: true,
+				tipo: 'H'
+			},
+			{
+				titolo: 'MiFID 2: Consulenza, collocamento e raccolta ordini',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/corsi/Copernico/INVESTIMENTO/0005_17_09/indiceCopernico.html',
+				enabled: true,
+				tipo: 'H'
+			},
+			{
+				titolo: 'Microsoft Excel 2013 Avanzato',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/corsi/Copernico/OFFICE2013/launchHTML5.html?id=EXA',
+				enabled: true,
+				tipo: 'H'
+			},
+			{
+				titolo: 'English Today - General English (Beginner A1)',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/corsi/Copernico/SCALA/LINGUE/english/today_general/beginner/indiceCopernico.html',
+				enabled: 'true',
+				tipo: 'F'
+			},
+			{
+				titolo: 'La capacità di scegliere',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/Corsi/Copernico/INVESTIMENTO/0012_16/indiceCopernico.html?id=capacita',
+				enabled: 'true',
+				tipo: 'F'
+			},
+			
+			{
+				titolo: 'Firestone Vanhawk 2',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/corsi/FIRESTONE/0048_16/indiceCopernico.html',
+				enabled: 'true',
+				tipo: 'H'
+			},
+			{
+				titolo: 'Piazza Copernico - Da esperto a docente: comunicazione e apprendimento',
+				path: '',
+				link: 'http://catalogo.labelacademy.com/corsi/Copernico/0068_08/indiceCopernico.html',
+				enabled: true,
+				tipo: 'F'
+			},
+			{
+				titolo: '',
+				path: '',
+				link: '',
+				enabled: '',
+				tipo: ''
+			},
+			{
+				titolo: 'Video Portale Egorà',
+				path: '',
+				link: 'tutorial_egora/pagina1.html',
+				enabled: 'true',
+				tipo: 'V'
+			},
+			{
+				titolo: 'Piazza Copernico - Portale Egorà',
+				path: '',
+				link: 'http://demo.piazzacopernico.it',
+				enabled: true,
+				tipo: ''
+			},
+			{
+				titolo: 'Piazza Copernico - Video formativi',
+				path: '',
+				link: 'https://www.youtube.com/playlist?list=PLY4I9yMQ0Vlmwe8DWiZ0LyarFpvpMnBgE',
+				enabled: true,
+				tipo: ''
+			}
+
+		];
+      	var elencoLezioni = "<tr><td colspan='4'>&nbsp;</td></tr>";
+		$(corsi).each(function () {
+			if(this.titolo != ''){
+				elencoLezioni += "<tr class='lezione'>";
+		    	elencoLezioni += "<td width='35px'>&nbsp;</td>";
+		      	elencoLezioni += "<td colspan='2'>";
+		      	if(this.enabled){
+		      		if(this.path != ''){
+			      		if(this.tipo == "H"){
+							elencoLezioni += "<a class='titolo' href='launchHTML5.html?id=" + this.path + "'>" + this.titolo + "</a>";
+			      		}else{
+			      			elencoLezioni += "<a class='titolo' href='launchFLASH.html?id=" + this.path + "'>" + this.titolo + "</a>";
+			      		}
+		      		}else{
+		      			elencoLezioni += "<a class='titolo' target='_blank' href='" + this.link + "'>" + this.titolo + "</a>";
+		      		}
+		      	}else{
+					elencoLezioni += this.titolo;
+		      	}
+		      	elencoLezioni += "</td>";
+		      	elencoLezioni += "<td align='center'>";
+		      	switch(this.tipo){
+		      		case "H":
+						elencoLezioni += "[ <span class='tipologia'>HTML5</span> ]";
+		      		break;
+		      		case "F":
+		      			elencoLezioni += "[ <span class='tipologia'>FLASH</span> ]";
+		      		break;
+		      		case "V":
+						elencoLezioni += "[ <span class='tipologia'>VIDEO</span> ]";
+		      		break;
+		      		case "L":
+		      			elencoLezioni += "[ <span class='tipologia'>LINK</span> ]";
+		      		break;
+		      	}
+		      	
+		      	elencoLezioni += "</td>";
+		      	elencoLezioni += "</tr>";
+				elencoLezioni += "<tr><td colspan='4'>&nbsp;</td></tr>";
+				elencoLezioni += "<tr><td colspan='4'>&nbsp;</td></tr>";
+			}else{
+				elencoLezioni += "<tr><td colspan='4'>&nbsp;</td></tr>";
+				elencoLezioni += "<tr><td colspan='4'>&nbsp;</td></tr>";
+			}
+
+			$("#lessonsContainer").html(elencoLezioni.toString());
+		});
+    })	
+
+</script>
+<body>
+    <table width="800px" border="0" align="center" cellpadding="0" cellspacing="0" >
+		<tr>
+			<td colspan="4" width="0" height="48" align="center">
+				<img src="images/intestazione_up2.png" width="794" height="120">
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="4">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="4">&nbsp;</td>
+		</tr>
+		<tr><td colspan='4' class='corso'>CORSI ON LINE</td></tr>
+		<tr>
+			<td colspan="4">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="4">&nbsp;</td>
+		</tr>
+		<tr>
+      		<td colspan="4">
+        		<table id="lessonsContainer" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+          			<tr><td colspan="4">&nbsp;</td></tr>
+          			<tr>
+            			<td colspan="4" align="center">Caricamento struttura in corso...</td>
+          			</tr>
+        		</table>
+      		</td>
+    	</tr>
+		<tr>
+			<td colspan="4">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="4" width="0" height="30" align="center"><img src="images/ombra_bottom.fw.png" width="800" height="30"></td>
+		</tr>
+    </table>
+</body>
+</html>

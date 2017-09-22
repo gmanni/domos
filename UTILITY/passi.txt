@@ -1,0 +1,30 @@
+npm install -g grunt-cli yo bower
+
+npm install -g generator-cg-angular
+
+yo
+
+seleziona il generator
+
+seleziona chi gestisce le route
+
+yo cg-angular:directive my-awesome-directive
+yo cg-angular:partial my-partial
+yo cg-angular:service my-service
+yo cg-angular:filter my-filter
+yo cg-angular:module my-module
+yo cg-angular:modal my-modal
+
+----------------------------------------------
+Promemoria STRUTTURA APP
+----------------------------------------------
+partial home dove definisco 
+- header 
+- corpo
+- footer
+
+modulo corsi 
+che contiene i suoi partial ad es
+- attivita
+- corsibody
+- dettagliocorsi

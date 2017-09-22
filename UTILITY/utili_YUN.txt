@@ -1,0 +1,3 @@
+/osjs/dist/
+
+ln -s /mnt/sda1/arduino/www/ sd

@@ -1,0 +1,68 @@
+{"digital":
+	[{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "",
+		"milliseconds": 100
+	},
+	{
+		"type": "P",
+		"assigned": "cancellone",
+		"milliseconds": 100
+	}
+	]
+}

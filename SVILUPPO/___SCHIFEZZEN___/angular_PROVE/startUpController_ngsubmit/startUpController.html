@@ -1,0 +1,17 @@
+<!doctype html>
+<html ng-app='myApp'>
+<head>
+<title>text controller</title>
+<script type="text/javascript" src="../angular.js"></script>
+<script type="text/javascript" src="startUpController.js"></script>
+</head>
+<body >
+	<form ng-submit="requestFunding()" ng-controller="startUpController">
+		Starting: <input  ng-change="computeNeeded()" ng-model="startingEstimate"/>
+		Recommendation: {{needed}}
+		hai scritto: {{startingEstimate}}
+		<button>submit</button>
+		<button ng-click="reset()">Reset</button>
+</form>
+</body>
+</html>

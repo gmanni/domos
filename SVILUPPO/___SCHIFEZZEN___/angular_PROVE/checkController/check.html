@@ -1,0 +1,14 @@
+<!doctype html>
+<html ng-app='myApp'>
+<head>
+<title>text controller</title>
+<script type="text/javascript" src="../angular.js"></script>
+<script type="text/javascript" src="checkController.js"></script>
+</head>
+<body >
+	<form ng-controller='checkController'>
+		<input type="checkbox" ng-model="youCheckedIt">metti il check qui</input>
+		<p>{{youCheckedIt}}</p>
+	</form>
+</body>
+</html>

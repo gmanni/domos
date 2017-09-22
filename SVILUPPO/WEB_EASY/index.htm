@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+
+<script type="text/javascript" src="js/angular.js"></script>
+<script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="js/angular.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/bootstrap2-toggle.js"></script>
+
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="css/bootstrap2-toggle.css">
+
+<title>Arduino Ajax I/O</title>
+
+<script>
+    var stringaResult;
+
+    /*$(document).ready(function(){
+
+        // evento change su slider
+        $('#pin13').change(function() {
+            console.log("CHANGE PIN 13");
+        })
+
+        var mainUrl = "http://192.168.0.100/arduino";
+        var onOffLedUrl = "/digital/13/";
+
+        $('#on').click(function(){
+            console.log("ON CLICK");
+            getRequest(mainUrl+onOffLedUrl+'1');
+        });
+
+        $('#off').click(function(){
+            console.log("OFF CLICK");
+            getRequest(mainUrl+onOffLedUrl+'0');
+        });
+
+       getRequest(mainUrl + "/getalldigital");
+
+    });
+    */
+
+    function getRequest(url){
+        console.log(url);
+        // $.ajax({
+        //     url: url,
+        //     type: "GET",
+        // }).done(function(response) {
+        //     console.log("SUCCESS");
+        //     console.log(response);
+        // }).fail(function() {
+        //     console.log("ERROR");
+        // });
+        
+        
+        /*$.ajax({
+            type: "GET",
+            url: url,
+            success: function(data){
+                console.log("SUCCESS");
+                console.log(data);
+                stringaResult = JSON.parse(data);
+                //$("#allPin").html(stringaResult.length);
+                var appDigital = stringaResult.digital.split(",");
+                console.log(appDigital);
+                var app = "";
+                var i=1;
+                $(appDigital).each(function(){
+                    app += "PIN D" + i + " = " + this + "<br>";
+                    i++;
+                });
+                /*$(stringaResult).each(function(){
+                    app += "PIN D" + this.pin + " = " + this.value + "<br>";
+                    if(this.pin == '13'){
+                        if(this.value == '1'){
+                            $('#pin13').bootstrapToggle('on');
+                        }else{
+                            $('#pin13').bootstrapToggle('off');
+                        }
+                    }
+                })*//*
+                $("#allPin").html(app);
+            },
+            error: function(e){
+                console.log("ERROR");
+                console.log(e);
+            }
+        });*/
+        
+        
+        // $.get(url, function(response, status){
+        //     console.log("RESPONSE " + response);
+        //     console.log("STATUS " + status);
+        //     if(status == 'success'){
+        //         console.log("OK");
+                
+        //         stringaResult = JSON.parse(response);
+        //         $("#allPin").html(stringaResult.pin + " " + stringaResult.value);
+                
+        //     }
+
+
+        // });
+        
+    }
+    
+    function arduinoController($scope, $http) {
+        $scope.digitalPins = [];
+
+        $scope.config = [] // Initialize with an empty array
+
+        $http.get('prova.txt').success(function(data, status, headers, config) {
+            console.log(data);
+            $scope.config = data;
+            console.log($scope.config);
+        })
+
+    
+        var request = $http({
+            // headers: 'Content-Type': 'application/html',
+            url: "http://192.168.0.105/arduino/getalldigital",
+            method: 'GET',
+            cache: false,
+            transformResponse: function (data, headersGetter, status) {
+                //This was implemented since the REST service is returning a plain/text response
+                //and angularJS $http module can't parse the response like that.
+                return {data: angular.fromJson(data)};
+            }
+            }).success(function (data, status, headers, config) {
+                console.log("SUCCESS");
+                console.log(data);
+                $scope.digitalPins = data.data;
+                console.log($scope.digitalPins.length)
+                
+                for(var i=0; i<13; i++){
+                    $scope.config.digital[i].status = $scope.digitalPins[i].value;
+                }
+                console.log($scope.config.digital);
+            })
+            .error(function (data, status, headers, config) {
+                $log.error('errore = ', data);
+            });
+              
+        $scope.salva = function(){
+            $http.post('save.php', JSON.stringify($scope.config)).error(function(status){console.log(status)});
+        
+        }  
+        $scope.accendiSpegni = function(index){
+            if($scope.config.digital[index].status === '0'){
+                $scope.config.digital[index].status = '1';
+            }else{
+                $scope.config.digital[index].status = '0';
+            }
+            var request = $http({
+                // headers: 'Content-Type': 'application/html',
+                url: "http://192.168.0.105/arduino/digital/" + $scope.digitalPins[index].pin +"/"+$scope.config.digital[index].status,
+                method: 'GET',
+                cache: false,
+                transformResponse: function (data, headersGetter, status) {
+                    //This was implemented since the REST service is returning a plain/text response
+                    //and angularJS $http module can't parse the response like that.
+                    return {data: angular.fromJson(data)};
+                }
+                }).success(function (data, status, headers, config) {
+                    console.log("SUCCESS");
+                    console.log(data);
+                    //$scope.digitalPins = data.data;
+                    //console.log($scope.digitalPins.length)
+                })
+                .error(function (data, status, headers, config) {
+                    $log.error('errore = ', data);
+                });
+
+
+        }
+}
+
+</script>
+
+</head>
+<body ng-controller="arduinoController">
+    <div class="container-fluid">
+        <div class="row" style="height: 40px;" ng-repeat="digital in config.digital">
+            <div class="col-xs-2">
+                PIN{{$index+1}} = {{digital.status}}
+            </div>
+            <div class="col-xs-10">
+
+                <button ng-disabled="digital.assigned==''" ng-model="digital.status" ng-click="accendiSpegni($index)" ng-hide="digital.status=='0'" type="button" id="btnPin{{$index}}">{{digital.assigned!=='' ? digital.assigned + ' OFF' : 'NA'}}</button>
+                <button ng-disabled="digital.assigned==''" ng-model="digital.status" ng-click="accendiSpegni($index)" ng-hide="digital.status=='1'" type="button" id="btnPin{{$index}}">{{digital.assigned!=='' ? digital.assigned + ' ON' : 'NA'}}</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <button ng-click="salva()">Save using PHP</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

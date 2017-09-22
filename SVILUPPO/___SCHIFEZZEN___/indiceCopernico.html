@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	
+	<title>Piazza Copernico</title>
+
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap2-toggle.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	
+</head>
+<script type="text/javascript" src="js/jquery-3.1.1.js"></script>
+<script src="js/fakeScormAPI.js"></script>
+<script src="js/jquery.popupWindow.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/bootstrap2-toggle.js"></script>
+
+<script language="javascript">
+	var titoloCorso = "";
+	var path 
+	var moduli = "C" // il valore C comprimi tutti i moduli
+
+	path = document.location.href;
+	if(path.toLowerCase().indexOf("id=") != -1){
+		path = path.split("id=")[1].toUpperCase();
+		//path = path.substr(0,3).toUpperCase();
+		var condizione = path != 'AGG' && path != 'ANT' && path != 'DAT' && path != 'DIR' && path != 'LAV' && path != 'PRE' && path != 'RLS' && path != 'RLS4' && path != 'RLS8' && path != 'RB' && path != 'LAVS';
+		if (condizione){
+			document.location.href = "indiceCopernico.html";	
+		}else{
+			path = path + "_";
+		}
+	}else{
+		//------------------------------------------------------------------------------
+		// DA MODIFICARE AD OGNI PROGETTO
+		//------------------------------------------------------------------------------
+		//	
+		// se questo file viene usato per un singolo corso, va commentata la riga seguente
+		// document.location.href = "indiceCopernico.html";
+		//
+		// e va decommentata la riga seguente
+		path = '';
+		//
+		//------------------------------------------------------------------------------
+	}
+
+	function impostaNavigazioneSco(datafromlms){
+		var app = datafromlms.split(";");
+		var trovato = "";
+		for (var i=0; i<app.length; i++){
+			if(app[i].split("=")[0].toLowerCase() == "avanti"){
+				app[i] = "avanti=" + document.getElementById('navigazione').value;
+				break;
+			}
+		}
+		for (var i=0; i<app.length; i++){
+			if(app[i].split("=")[0].toLowerCase() == "indice"){
+				app[i] = "indice=" + document.getElementById('navigazione').value;
+				break;
+			}
+		}
+		trovato = app.join(";")
+		return trovato;
+	}
+
+	function cercaIdLezione(datafromlms){
+		var app = datafromlms.split(";");
+		var trovato = "";
+		for (var i=0; i<app.length; i++){
+			if(app[i].split("=")[0].toLowerCase() == "pathud"){
+				trovato = app[i].split("=")[1];
+				break;
+			}
+		}
+		return trovato;
+	}
+
+	function cercaTipoLezione(datafromlms){
+		var app = datafromlms.split(";");
+		var trovato = "";
+		for (var i=0; i<app.length; i++){
+			if(app[i].split("=")[0].toLowerCase() == "type"){
+				trovato = app[i].split("=")[1];
+				break;
+			}
+		}
+		switch(trovato){
+			case "v": 
+				trovato = "Video";
+			break;
+			case "te": 
+				trovato = "Test";
+			break;
+			case "tu": 
+				trovato = "Tutoriale";
+			break;
+			case "s":
+				trovato = "Simulazione";
+			break;
+			default:
+				trovato = "Non assegnato"
+			break;
+		}
+		return trovato;
+	}
+ 		
+	function getManifest() {
+
+		$("#lessonsContainer").html("Caricamento struttura in corso...");
+
+		launch_data = new Array();
+		indice = 0;
+
+		if($('#navigazione').prop('checked')){
+			imsManifest = "FLASH/" + path + "imsmanifest.xml";
+		}else{
+			imsManifest = "FLASH/" + path + "imsmanifest_SBLOCCATO.xml";
+		}
+			
+		$.ajax({
+			type: "GET",
+			url: imsManifest,
+			dataType: "xml",
+			success: function (xml) {
+				$(xml).find('organization').each(function () {
+					elencoLezioni = "";
+					offset = 0;
+					var modulo = 0;
+					
+					//prelevo il titolo del corso
+					titoloCorso = $(this).find('title:first').text();
+					$('#titoloCorso').html(titoloCorso);
+					$(document).prop('title', "Piazza Copernico - " + titoloCorso);
+					elencoLezioni += "<div class='col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3'>";
+					// prelevo moduli e lezioni
+					$(this).find("item").each(function () {
+						if ($(this).attr("identifierref")) {
+          					// lezione
+           					if ($(this).find("datafromlms").length > 0 || $(this).find("adlcp\\:datafromlms").length > 0) {
+           						if($(this).find("datafromlms").length > 0){
+           							var datafromlms = $(this).find("datafromlms").text(); 
+           							idLezione = cercaIdLezione(datafromlms);
+           							var disabled = (datafromlms.indexOf("disabled=1") != -1);
+           							if (idLezione == ''){
+           								// non trova il pathUd, si tratta di un motore vecchio, creo il codice lezione progressivo
+           								strModulo = '0' + modulo;
+           								strLezione = '0' + indice;
+           								strModulo = strModulo.substr(strModulo.length - 2, 2);
+           								strLezione = strLezione.substr(strLezione.length - 2, 2);
+
+           								idLezione = "m" + strModulo + "ud" + strLezione;
+           							}
+									tipoLezione = cercaTipoLezione(datafromlms);
+              						launch_data.push(datafromlms);
+              					}else{
+              						var datafromlms = $(this).find("adlcp\\:datafromlms").text(); 
+              						idLezione = cercaIdLezione(datafromlms);
+              						var disabled = (datafromlms.indexOf("disabled=1") != -1);
+              						tipoLezione = cercaTipoLezione(datafromlms);
+              						launch_data.push(datafromlms);
+              					}
+
+              					elencoLezioni += "<div class='row lezione'>";
+								if(disabled){
+									elencoLezioni += "<div class='col-lg-12 titoloLezioneDisabled'>";
+								}else{
+								elencoLezioni += "<div class='col-lg-12 titoloLezione'>";
+								}
+								elencoLezioni += $(this).find('title').text();
+								elencoLezioni += "</div>";
+								if(disabled){
+									elencoLezioni += "<div class='col-xs-6 col-sm-4 dettagliLezione dettagliLezioneDisabled'>";
+								}else{
+								elencoLezioni += "<div class='col-xs-6 col-sm-4 dettagliLezione'>";
+								}
+								elencoLezioni += idLezione;
+								elencoLezioni += "</div>";
+								if(disabled){
+									elencoLezioni += "<div class='col-xs-6 col-sm-4 dettagliLezione dettagliLezioneDisabled'>";
+								}else{
+								elencoLezioni += "<div class='col-xs-6 col-sm-4 dettagliLezione'>";
+								}
+								elencoLezioni += "[ " + tipoLezione + " ]";
+								elencoLezioni += "</div>";
+								elencoLezioni += "<div class='col-xs-12 col-sm-4 pulsanteAvviaLaunch'>";
+								if(disabled){
+									elencoLezioni += "<a disabled class='btn btn-large pulsante sco disabled' role=button>";
+								}else{
+								elencoLezioni += "<a onclick='setLaunchData(" + indice + ")' href='FLASH/" + $(xml).find('resource[identifier="' + $(this).attr("identifierref") + '"]').attr("href") + "' class='btn btn-large pulsante sco' role=button>";
+								}
+								elencoLezioni +=  "AVVIA";
+              					elencoLezioni += "</a>";
+								elencoLezioni += "</div>";
+								elencoLezioni += "</div>";
+
+              				}
+              			} else {
+            				// modulo
+            				launch_data.push("");
+							if(modulo != 0){
+								elencoLezioni += "</div>";
+							}
+							modulo++;
+							elencoLezioni += "<div class='row modulo rigaModulo'>";
+							elencoLezioni += "<div class='col-xs-12 col-sm-10 '>";
+							elencoLezioni += $(this).find('title:first').text();
+							elencoLezioni += "</div>";
+							elencoLezioni += "<div class='col-xs-12 col-sm-2 text-right' style='margin-left: -1rem;'>";
+							elencoLezioni += "<a class='comprimiEspandi' id='"+  modulo +"'>comprimi</a>";
+							elencoLezioni += "</div>";
+							elencoLezioni += "</div>";
+							elencoLezioni += "<div id='modulo" + modulo + "'>";
+
+            			}
+            			indice++;
+
+            		});
+					elencoLezioni += "</div>";
+            		$("#lessonsContainer").html(elencoLezioni);
+            			
+            		$('.sco').popupWindow({
+	            		height: 634,
+	            		width: 1000,
+	            		centerScreen: 1
+	            	});	
+	            	$('.comprimiEspandi').click(function(){
+						console.log("CLICK");
+						if($(this).text() == 'comprimi'){
+							$(this).text('espandi');
+							$('#modulo' + $(this).prop("id")).css('display', 'none');		
+						}else{
+							$(this).text('comprimi');				
+							$('#modulo' + $(this).prop("id")).css('display', '');		
+						}
+					});
+				});
+				if(moduli == "C"){
+					$("div[id^='modulo']").each(function () {
+						$(this).css('display', 'none');		
+					});
+					$("a.comprimiEspandi").each(function(){
+						$(this).text('espandi');
+					});
+				}
+			},
+			error: function (request, status, error) {
+				alert(request.responseText);
+			}
+		});
+		
+	}
+
+	$(document).ready(function () {
+
+		getManifest();
+		$('#navigazione').change(function(){
+			getManifest();
+		});	
+
+	});
+
+	
+</script>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 header">
+				<img class="img-responsive" src="images/banner2.jpg" style="margin: 0 auto; width:100%;">
+			</div>
+			<div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 titoloCollana" id="titoloCorso">
+				Caricamento struttura in corso...
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 text-right" style="padding-top: 1rem; padding-bottom: 1rem;">
+				<input id="navigazione" type="checkbox" data-toggle="toggle" data-on="Avanti bloccato" data-off="Avanti sbloccato" data-width="15rem" data-height="3.5rem" data-onstyle="danger" data-offstyle="success">
+			</div>
+		</div>
+		<div class="row" id="lessonsContainer">
+			<div class='col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3'>
+				<!-- <div class="row">
+					<div class='col-xs-12 text-center'>
+						Caricamento struttura in corso...
+					</div>
+				</div> -->
+
+				<div class='row modulo'>
+					<div class='col-xs-12 col-sm-10 '>
+						Luoghi e attrezzature di lavoro 
+					</div>
+					<div class="col-xs-12 col-sm-2 text-right" style='margin-left: -1rem;'>
+						<a class="comprimiEspandi" id='1'>comprimi</a>
+					</div>
+				</div>
+				<div id="modulo1">
+					<div class='row lezione'>
+						<div class='col-lg-12 titoloLezione'>
+							Le caratteristiche dei luoghi di lavoro
+						</div>
+						<div class='col-xs-6 col-sm-4 dettagliLezione'>
+							TUS_M05UD01
+						</div>
+						<div class='col-xs-6 col-sm-4 dettagliLezione'>
+							[ Tutoriale ]
+						</div>
+
+						<div class='col-xs-12 col-sm-4 pulsanteAvviaLaunch'>
+							<a class='btn btn-large pulsante' href='s.html?id=AGG'>AVVIA</a>
+						</div>
+					</div>
+
+					<div class='row lezione'>
+						<div class='col-lg-12 titoloLezione'>
+							La segnaletica
+						</div>
+						<div class='col-xs-6 col-lg-4 dettagliLezione'>
+							TUS_M05UD02
+						</div>
+						<div class='col-xs-6 col-lg-4 dettagliLezione'>
+							[ Tutoriale ]
+						</div>
+
+						<div class='col-xs-12 col-lg-4 pulsanteAvviaLaunch'>
+							<a class='btn btn-large pulsante' href='s.html?id=AGG'>AVVIA</a>
+						</div>
+					</div>
+				</div>
+				
+
+				<div class='row modulo'>
+					<div class='col-xs-12 col-sm-10 '>
+						Luoghi e attrezzature di lavoro
+					</div>
+					<div class="col-xs-12 col-sm-2 text-right" style='margin-left: -1rem;'>
+						<a class="comprimiEspandi" id='2'>comprimi</a>
+					</div>
+				</div>
+				<div id="modulo2">
+					<div class='row lezione'>
+						<div class='col-lg-12 titoloLezione'>
+							Le caratteristiche dei luoghi di lavoro
+						</div>
+						<div class='col-xs-6 col-sm-4 dettagliLezione'>
+							TUS_M05UD01
+						</div>
+						<div class='col-xs-6 col-sm-4 dettagliLezione'>
+							[ Tutoriale ]
+						</div>
+
+						<div class='col-xs-12 col-sm-4 pulsanteAvviaLaunch'>
+							<a class='btn btn-large pulsante' href='s.html?id=AGG'>AVVIA</a>
+						</div>
+					</div>
+
+					<div class='row lezione'>
+						<div class='col-lg-12 titoloLezione'>
+							La segnaletica
+						</div>
+						<div class='col-xs-6 col-lg-4 dettagliLezione'>
+							TUS_M05UD02
+						</div>
+						<div class='col-xs-6 col-lg-4 dettagliLezione'>
+							[ Tutoriale ]
+						</div>
+
+						<div class='col-xs-12 col-lg-4 pulsanteAvviaLaunch'>
+							<a class='btn btn-large pulsante' href='s.html?id=AGG'>AVVIA</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
